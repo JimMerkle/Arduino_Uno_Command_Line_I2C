@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "command_line.h"
+#include "i2c_ds3231.h"
 #include "version.h"
 
 // Typedefs

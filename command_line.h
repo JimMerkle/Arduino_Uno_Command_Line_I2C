@@ -41,23 +41,6 @@ extern "C" {
 #define MAXWORDS 10     // support up to 10 (command and parameters)
 #define MAXSERIALBUF 64 // Our command line will use a 64 byte buffer
 
-//=================================================================================================
-// DS3231 routines
-//=================================================================================================
-/** Constants */
-#define I2C_ADDRESS_DS3231  0x68
-
-// Structure to hold/record time read from to written to an external RTC module (DS3231)
-typedef struct {
-	uint8_t yOff; ///< Year offset from 2000
-	uint8_t m;    ///< Month 1-12
-	uint8_t d;    ///< Day 1-31
-	uint8_t hh;   ///< Hours 0-23
-	uint8_t mm;   ///< Minutes 0-59
-	uint8_t ss;   ///< Seconds 0-59
-}DATE_TIME;
-//=================================================================================================
-
 // Externs
 extern char buffer[]; // holds command strings from user
 extern char * argv[]; // pointers into buffer
@@ -75,9 +58,6 @@ void cl_process_buffer(char * buffer);
 // command line functions
 int cl_help(void);
 int cl_add(void);
-int cl_i2c_scan(void);
-int cl_time(void); // Arduino_Uno_Command_Line_I2C.ino
-int cl_date(void); // Arduino_Uno_Command_Line_I2C.ino
 
 
 #ifdef __cplusplus
