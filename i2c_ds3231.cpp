@@ -81,6 +81,39 @@ int i2c_write_read(uint8_t i2c_address, uint8_t * pwrite, uint8_t wr_count, uint
 	return 0;
 }
 
+/*====================================================================================================
+| DS3231 Index Registers (See DS3231.pdf, Figure 1, Timekeeping Registers)
+|=====================================================================================================
+| INDEX | BIT 7 | BIT 6 | BIT 5 | BIT 4  | BIT 3 | BIT 2 | BIT 1 | BIT 0 | FUNCTION    |   RANGE     |
+|  00h  |   0   |      10 Seconds        |            Seconds            |  Seconds    |   00-59     |
+|  01h  |   0   |      10 Minutes        |            Minutes            |  Minutes    |   00-59     |
+|  02h  |   0   | 12/24 | PM/AM |10 Hour |              Hour             |  Hours      |1-12 + PM/AM |
+|       |       |       |20 Hour|        |                               |             |   00-23     |
+|  03h  |   0   |   0   |   0   |   0    |   0   |      Day              | Day of Week |1-7 User Def |
+|  04h  |   0   |   0   |    10 Date     |              Date             |  Date       |   01-31     |
+|  05h  |Century|   0   |   0   |10 Month|             Month             |Month/Century|01-12+Century|
+|  06h  |           10 Year              |              Year             |  Year       |   00-99     |
+|  07h  | A1M1  |      10 Seconds        |            Seconds            |Alarm 1 Sec  |   00-59     |
+|  08h  | A1M2  |      10 Minutes        |            Minutes            |Alarm 1 Min  |   00-59     |
+|  09h  | A1M3  | 12/24 | PM/AM |10 Hour |              Hour             |Alarm 1 Hours|1-12 + PM/AM |
+|       |       |       |20 Hour|        |                               |             |             |
+|  0Ah  | A1M4  | DY/DT |    10 Date     |              Day              |Alarm 1 Day  |    1-7      |
+|       |       |       |                |              Date             |Alarm 1 Date |    1-31     |
+|  0Bh  | A2M2  |      10 Minutes        |            Minutes            |Alarm 2 Min  |   00-59     |
+|  0Ch  | A2M3  | 12/24 | PM/AM |10 Hour |              Hour             |Alarm 2 Hours|1-12 + AM/PM |
+|       |       |       |20 Hour|        |                               |             |   00-23     |
+|  0Dh  | A2M4  | DY/DT |    10 Date     |              Day              |Alarm 2 Day  |    1-7      |
+|       |       |       |                |              Date             |Alarm 2 Date |    1-31     |
+|  0Eh  | EOSC  | BBSQW | CONV  |  RS2   |  RS1  | INTCN |  A2IE | A1IE  |  Control    |     —       |
+|  0Fh  |  OSF  |   0   |   0   |   0    |EN32kHz|  BSY  |  A2F  | A1F   |Contrl/Status|     —       |
+|  10h  | SIGN  | DATA  | DATA  | DATA   | DATA  | DATA  | DATA  | DATA  |Aging Offset |     —       |
+|  11h  | SIGN  | DATA  | DATA  | DATA   | DATA  | DATA  | DATA  | DATA  |MSB of Temp  |     —       |
+|  12h  | DATA  | DATA  |   0   |   0    |   0   |   0   |   0   |   0   |LSB of Temp  |     —       |
+|====================================================================================================*/
+// Notes:
+// The numberic values stored to / read from the DS3231 for seconds, minutes, hours, day, date, month, year,
+// use BCD encoding.
+
 //=================================================================================================
 // DS3231 routines
 //=================================================================================================
