@@ -218,9 +218,9 @@ int cl_date(void)
 	read_ds3231(&dt); // read in time and date values into DATE_TIME structure
 
 	if(4 == argc) {
-		// Set the date using arguments at index 1 <day>, 2 <month>, 3 <year>
-		dt.d = strtol(argv[1], NULL, 10); // user will use decimal
-		dt.m = strtol(argv[2], NULL, 10);
+		// Set the date using arguments at index 1 <month>, 2 <day>, 3 <year>
+		dt.m = strtol(argv[1], NULL, 10); // user will use decimal
+    dt.d = strtol(argv[2], NULL, 10);
 		uint16_t year = strtol(argv[3], NULL, 10);
 		if(year >= 2000) year -= 2000; // convert to offset
 		dt.yOff = (uint8_t)year;
@@ -228,9 +228,8 @@ int cl_date(void)
 		write_ds3231(&dt);
 	}
 
-	// Always read the DS3231 and display the date
+	// Always read the DS3231 and display the date MMDDYYYY
 	read_ds3231(&dt);
-	printf("%02u/%02u/%04u\r\n",dt.d,dt.m,dt.yOff + 2000);
+	printf("%02u/%02u/%04u\r\n",dt.m,dt.d,dt.yOff + 2000);
 	return 0;
 }
-

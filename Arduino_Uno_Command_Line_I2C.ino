@@ -1,17 +1,27 @@
-// Arduino_Uno_Command_Line_I2C.ino
+// Arduino_Uno_Command_Line_I2C_DS3231_TM1637.ino
 // Development board: Arduino Uno
-// Connections:
-//   I2C:SCL - Arduino A5 (PC5)   
-//   I2C:SDA - Arduino A4 (PC4)
+// DS3231 Connections:
+//   DS3231_I2C:SCL - Arduino A5 (PC5)   
+//   DS3231_I2C:SDA - Arduino A4 (PC4)
+//
+// Using the "TM1637" library by Avishay Orpaz, vesion 1.2.0, "TM1637Display.h" / "TM1637Display.cpp"
+// TM1637 Connections:
+//   TM1637_CLK: A0
+//   TM1637_IO:  A1
+//
 // Use Arduino's "Serial Monitor" or Teraterm with local echo
 //
 // Notes:
 //
-#include <Wire.h>
+#include <Wire.h>           // I2C library class
 #include "command_line.h"
 #include "i2c_ds3231.h"
+#include <TM1637Display.h> // TM1637 library class
 
-// Create a file stream with name, f_out
+//=============================================================================
+// printf() support - Create an "f_out" file stream
+// - use f_out for Serial.write() - single character output
+//=============================================================================
 FILE f_out;
 int sput(char c, __attribute__((unused)) FILE* f) {return !Serial.write(c);}
 
@@ -21,9 +31,11 @@ void setup() {
   Serial.begin(115200);
   //Serial.setTimeout(100); // try 100ms timeout
 
-  // Assign f_out for _FDEV_SETUP_WRITE
+  //=============================================================================
+  // printf() support - Assign f_out for _FDEV_SETUP_WRITE
   fdev_setup_stream(&f_out, sput, nullptr, _FDEV_SETUP_WRITE); // cf https://www.nongnu.org/avr-libc/user-manual/group__avr__stdio.html#gaf41f158c022cbb6203ccd87d27301226
   stdout = &f_out;
+  //=============================================================================
 
   while (!Serial) {
     ;  // wait for serial port to connect. Needed for native USB port only
@@ -62,21 +74,18 @@ void remove_crlf(char * sz)
   }
 }
 
-String ser_data; // Uninitialized String object
+// Implement a non-blocking function to look for an input character (used by command_line.c)
+// If character available, return chracter, else return EOF (-1)
+int __io_getchar(void)
+{
+  int c = EOF;
+  if(Serial.available()) {
+    c = Serial.read();
+  }
+  return c;
+}
 
 void loop() {
-  // Wait for a string from the Arduino "Serial Monitor"
-  while(!Serial.available()){}; // spin until more serial data is available
-
-  ser_data = Serial.readString(); // read in an entire string (or timeout) into String object..
-  char * buffer = ser_data.c_str();
-
-  // The following two lines write the buffer to the Arduino Terminal, displaying the text entered
-  // For Teraterm - local echo, it produces duplicates of the text entered
-  remove_crlf(buffer);
-  printf("%s\n",buffer);  // display string entered w/o CR/LF on end
-  
-  cl_process_buffer(buffer);
-  printf(">"); // command prompt for next line
+  cl_loop(); // check for input character available (command_line.c)
 
 }

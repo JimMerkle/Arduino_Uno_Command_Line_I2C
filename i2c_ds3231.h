@@ -53,7 +53,6 @@ int cl_i2c_scan(void);
 int cl_time(void);
 int cl_date(void);
 
-
 #ifdef __cplusplus
 }
 #endif

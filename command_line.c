@@ -39,11 +39,8 @@ const COMMAND_ITEM cmd_table[] = {
     {NULL,NULL,0,NULL}, /* end of table */
 };
 
-int cl_time(void); // Arduino_Uno_Command_Line_I2C.ino
-int cl_date(void); // Arduino_Uno_Command_Line_I2C.ino
-
 // Globals:
-//char buffer[MAXSERIALBUF]; // holds command strings from user
+char buffer[MAXSERIALBUF]; // holds command strings from user
 char * argv[MAXWORDS]; // pointers into buffer
 int argc; // number of words (command & arguments)
 
@@ -59,11 +56,6 @@ void cl_setup(void) {
     printf(">"); // initial prompt
 }
 
-// Externals
-//int __io_getchar(void);   // main.c
-//int __io_putchar(int ch); // main.c
-
-#if 0
 // Check for data available from USART interface.  If none present, just return.
 // If data available, process it (add it to character buffer if appropriate)
 void cl_loop(void)
@@ -82,10 +74,10 @@ void cl_loop(void)
           case _LF:
             buffer[index] = 0; // null terminate
             if(index) {
-        		putchar(_LF); // newline
+        		  putchar(_LF); // newline
             	cl_process_buffer(); // process the null terminated buffer
             }
-    		printf("\n>");
+            printf("\n>");
             index = 0; // reset buffer index
             return;
           case _BS:
@@ -103,10 +95,10 @@ void cl_loop(void)
   } // while(1)
   return;
 } // cl_loop()
-#endif
 
-void cl_process_buffer(char * buffer)
+void cl_process_buffer(void)
 {
+    //printf("%s:\"%s\"\n",__func__,buffer);
     argc = cl_parseArgcArgv(buffer, argv, MAXWORDS);
     // Display each of the "words" / command and arguments
     //for(int i=0;i<argc;i++)
